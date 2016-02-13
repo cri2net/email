@@ -5,6 +5,7 @@ namespace cri2net\email;
 class Email
 {
     public $folder;
+    public $lang = 'ru';
     
     private $PHPMailer = null;
 
@@ -134,7 +135,7 @@ class Email
         }
     }
 
-    public static function getLinkToService($email)
+    public function getLinkToService($email)
     {
         $lang = [
             'mail.ru'        => ['ru' => 'Почта Mail.Ru',            'ua' => 'Пошта Mail.Ru'],
@@ -201,7 +202,7 @@ class Email
             if ($item[0] == $domain) {
                 return [
                     'domain' => $item[0],
-                    'title' => $lang[$item[0]]['ru'],
+                    'title' => $lang[$item[0]][$this->lang],
                     'link' => $item[1]
                 ];
             }
