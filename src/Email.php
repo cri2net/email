@@ -54,20 +54,20 @@ class Email
         if (strlen($template) > 0) {
             try {
                 $html_message = $this->getTemplate($template);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
             }
 
             try {
                 $plaintext = $this->getTemplate($template, true);
                 $plaintext = $this->fetch($plaintext, $data);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
             }
 
             if (isset($html_message)) {
                 try {
                     $main_template = $this->getTemplate('__main');
                     $html_message = str_ireplace('{{MAIN_CONTENT}}', $html_message, $main_template);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                 }
                 $html_message = $this->fetch($html_message, $data);
 
@@ -100,7 +100,7 @@ class Email
             return file_get_contents($filename);
         }
 
-        throw new Exception("Email template not found");
+        throw new \Exception("Email template not found");
         return '';
     }
 
