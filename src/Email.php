@@ -112,7 +112,7 @@ class Email
 
         if (preg_match_all("/".$re1.$re2."/is", $template_text, $matches)) {
             for ($i=0; $i < count($matches[1]); $i++) {
-                $template_text = str_ireplace($matches[1][$i], $data[$matches[2][$i]], $template_text);
+                $template_text = str_ireplace($matches[1][$i], $data[strtolower($matches[2][$i])], $template_text);
             }
         }
 
@@ -121,6 +121,12 @@ class Email
 
     private static function replaceDefaults(&$data)
     {
+        $tmp = [];
+        foreach ($data as $key => $value) {
+            $tmp[strtolower($key)] = $value;
+        }
+        $data = $tmp;
+
         if (defined('SITE_DOMAIN') && !isset($data['site_domain'])) {
             $data['site_domain'] = SITE_DOMAIN;
         }
