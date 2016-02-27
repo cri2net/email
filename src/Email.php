@@ -71,7 +71,7 @@ class Email
                 }
                 $html_message = $this->fetch($html_message, $data);
 
-                $this->Body = $html_message;
+                $this->Body = $this->loadStaticAttach($html_message);
                 if (isset($plaintext)) {
                     $this->AltBody = $plaintext;
                 }
@@ -139,6 +139,29 @@ class Email
         if (!isset($data['year'])) {
             $data['year'] = date('Y');
         }
+    }
+
+    private function loadStaticAttach($message)
+    {
+        preg_match_all("/(src|background)=[\"'](.*)[\"']/Ui", $message, $images);
+        if (isset($images[2])) {
+            foreach ($images[2] as $imgindex => $url) {
+                if (preg_match('#^[A-z]+://#', $url)) {
+                    $need_replace = false;
+                    $cid = md5($url);
+                    $filename = self::mb_pathinfo($url, PATHINFO_BASENAME);
+                    $img = @file_get_contents($url);
+                    
+                    if ($img !== false) {
+                        if ($this->addStringEmbeddedImage($img, $cid, $filename, 'base64', 'application/octet-stream', 'inline')) {
+                            $message = preg_replace("/".$images[1][$imgindex]."=[\"']".preg_quote($url, '/')."[\"']/Ui", $images[1][$imgindex]."=\"cid:".$cid."\"", $message);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $message;
     }
 
     public function getLinkToService($email)
