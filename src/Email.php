@@ -79,6 +79,8 @@ class Email
                 $this->Body = $plaintext;
                 $this->ContentType = "text/plain";
             }
+        } else {
+            $this->Body = $this->loadStaticAttach($message);
         }
 
         $this->Subject = $subject;
@@ -141,7 +143,7 @@ class Email
         }
     }
 
-    private function loadStaticAttach($message)
+    public function loadStaticAttach($message)
     {
         preg_match_all("/(src|background)=[\"'](.*)[\"']/Ui", $message, $images);
         if (isset($images[2])) {
