@@ -25,9 +25,7 @@ class Email
 
     public function __set($name, $value)
     {
-        if (isset($this->PHPMailer->$name)) {
-            $this->PHPMailer->$name = $value;
-        }
+        $this->PHPMailer->$name = $value;
     }
 
     public function __get($name)
