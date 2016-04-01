@@ -2,10 +2,13 @@
 
 namespace cri2net\email;
 
+use cri2net\php_pdo_db\PDO_DB;
+
 class Email
 {
     public $folder;
     public $lang = 'ru';
+    public $email_table = '';
     
     private $PHPMailer = null;
 
@@ -20,6 +23,10 @@ class Email
 
         foreach ($config as $key => $value) {
             $this->$key = $value;
+        }
+
+        if ($this->email_table == '') {
+            $this->email_table = (defined('TABLE_PREFIX')) ? TABLE_PREFIX . 'emails' : 'emails';
         }
     }
 
@@ -45,6 +52,52 @@ class Email
     public function call_phpmailer_send()
     {
         return $this->PHPMailer->Send();
+    }
+
+    public function sendEmailByCron()
+    {
+        $time = microtime(true);
+        $list = PDO_DB::table_list($this->email_table, "status='new' AND min_sending_time<=$time");
+
+        foreach ($list as $item) {
+            $this->clearAllRecipients();
+            unset($update);
+    
+            $replace = (array)(@json_decode($item['replace_data']));
+            $settings = (array)(@json_decode($item['settings']));
+            foreach ($settings as $key => $value) {
+                $this->$key = $value;
+            }
+
+            $subject = (isset($settings['Subject'])) ? $settings['Subject'] : '';
+            
+            switch ($item['type']) {
+                case 'raw_text':
+                    $this->ContentType = 'text/plain';
+                    $complete = $this->send([$item['to_email'], $item['to_username']], $subject, $item['raw_body']);
+                    break;
+
+                case 'raw_html':
+                    $this->ContentType = 'text/html';
+                    $complete = $this->send([$item['to_email'], $item['to_username']], $subject, $item['raw_body']);
+                    break;
+
+                case 'html_template':
+                    $complete = $this->send([$item['to_email'], $item['to_username']], $subject, $item['raw_body'], $item['template'], $replace);
+                    break;
+                
+                default:
+                    throw new \Exception("Unknow type");
+                    continue;
+            }
+
+            $update = [
+                'status'     => (($complete) ? 'complete' : 'fail'),
+                'updated_at' => microtime(true),
+                'send_at'    => microtime(true),
+            ];
+            PDO_DB::update($update, $this->email_table, $item['id']);
+        }
     }
 
     public function send($to, $subject, $message, $template = '', $data = [])
