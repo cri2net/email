@@ -1,6 +1,7 @@
 
 -- Не забываем добавлять к имени таблицы префикс своего проекта
 
+-- v1.1.0.0
 CREATE TABLE IF NOT EXISTS `emails` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `status` enum('new','complete','cancel','fail') NOT NULL DEFAULT 'new',
@@ -19,3 +20,8 @@ CREATE TABLE IF NOT EXISTS `emails` (
   KEY `status` (`status`,`min_sending_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+-- v1.1.0.2
+-- Add status "sending"
+ALTER TABLE `prod_emails`
+  CHANGE `status` `status` ENUM('new','sending','complete','cancel','fail') CHARSET utf8 COLLATE utf8_general_ci DEFAULT 'new' NOT NULL;

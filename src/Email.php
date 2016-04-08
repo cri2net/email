@@ -61,7 +61,11 @@ class Email
 
         foreach ($list as $item) {
             $this->clearAllRecipients();
-            unset($update);
+            $update = [
+                'status'     => 'sending',
+                'updated_at' => microtime(true)
+            ];
+            PDO_DB::update($update, $this->email_table, $item['id']);
     
             $replace = (array)(@json_decode($item['replace_data']));
             $settings = (array)(@json_decode($item['settings']));
