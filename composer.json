@@ -30,7 +30,7 @@
             "type": "package",
             "package": {
                 "name": "cri2net/php-pdo-db",
-                "version": "1.0.0",
+                "version": "1.0.0.1",
                 "source": {
                     "url": "https://bitbucket.org/cri2net/php-pdo-db.git",
                     "type": "git",
