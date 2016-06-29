@@ -169,7 +169,8 @@ class Email
 
         if (preg_match_all("/".$re1.$re2."/is", $template_text, $matches)) {
             for ($i=0; $i < count($matches[1]); $i++) {
-                $template_text = str_ireplace($matches[1][$i], $data[strtolower($matches[2][$i])], $template_text);
+                $replace = (isset($data[strtolower($matches[2][$i])])) ? $data[strtolower($matches[2][$i])] : '';
+                $template_text = str_ireplace($matches[1][$i], $replace, $template_text);
             }
         }
 

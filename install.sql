@@ -23,5 +23,5 @@ CREATE TABLE IF NOT EXISTS `emails` (
 
 -- v1.1.0.2
 -- Add status "sending"
-ALTER TABLE `prod_emails`
+ALTER TABLE `emails`
   CHANGE `status` `status` ENUM('new','sending','complete','cancel','fail') CHARSET utf8 COLLATE utf8_general_ci DEFAULT 'new' NOT NULL;
