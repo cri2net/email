@@ -8,45 +8,6 @@
             "email": "cri2net@gmail.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "cri2net/php_singleton",
-                "version": "1.0.0",
-                "source": {
-                    "url": "https://bitbucket.org/cri2net/php-singleton.git",
-                    "type": "git",
-                    "reference": "master"
-                },
-                "autoload": {
-                    "psr-4": {
-                        "cri2net\\php_singleton\\": "src"
-                    }
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "cri2net/php-pdo-db",
-                "version": "1.0.0.1",
-                "source": {
-                    "url": "https://bitbucket.org/cri2net/php-pdo-db.git",
-                    "type": "git",
-                    "reference": "master"
-                },
-                "autoload": {
-                    "psr-4": {
-                        "cri2net\\php_pdo_db\\": "src"
-                    }
-                },
-                "require": {
-                    "cri2net/php_singleton": "~1.0"
-                }
-            }
-        }
-    ],
     "require": {
         "php": ">=5.4.0",
         "cri2net/php-pdo-db": "~1.0",
