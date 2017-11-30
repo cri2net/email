@@ -15,6 +15,9 @@
     },
     "require-dev": {
     },
+    "suggest": {
+        "placebook/framework-selfupdate": "For semi-automatic work with SQL migrations"
+    },
     "autoload": {
         "psr-4": {
             "cri2net\\email\\": "src"
