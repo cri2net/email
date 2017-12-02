@@ -2,6 +2,7 @@
 
 namespace cri2net\email;
 
+use \Exception;
 use cri2net\php_pdo_db\PDO_DB;
 
 class Email
@@ -49,11 +50,20 @@ class Email
         }
     }
 
+    /**
+     * Вызов метода Send объекта PHPMailer, так как иначе вызвать нельзя
+     * php не передаёт $this->Send() на __call(), а а вызывает родной метод send, хоть регистр методов и не совпадает
+     * @return return mixed То, что возвращает PHPMailer->Send();
+     */
     public function call_phpmailer_send()
     {
         return $this->PHPMailer->Send();
     }
 
+    /**
+     * Отправка заранее подготовленных писем из БД
+     * @return void
+     */
     public function sendEmailByCron()
     {
         $time = microtime(true);
@@ -63,14 +73,21 @@ class Email
             $this->clearAllRecipients();
             $update = [
                 'status'     => 'sending',
-                'updated_at' => microtime(true)
+                'updated_at' => microtime(true),
             ];
             PDO_DB::update($update, $this->email_table, $item['id']);
     
             $replace = (array)(@json_decode($item['replace_data']));
             $settings = (array)(@json_decode($item['settings']));
-            foreach ($settings as $key => $value) {
-                $this->$key = $value;
+
+            if (!empty($settings)) {
+
+                // бекапим текущее состояние, чтоб не потерять его после применения кастомных настроек
+                $original = clone $this->PHPMailer;
+
+                foreach ($settings as $key => $value) {
+                    $this->$key = $value;
+                }
             }
 
             $subject = (isset($settings['Subject'])) ? $settings['Subject'] : '';
@@ -87,12 +104,19 @@ class Email
                     break;
 
                 case 'html_template':
+                    $this->ContentType = 'text/html';
                     $complete = $this->send([$item['to_email'], $item['to_username']], $subject, $item['raw_body'], $item['template'], $replace);
                     break;
                 
                 default:
-                    throw new \Exception("Unknow type");
+                    throw new Exception("Unknow type");
                     continue;
+            }
+
+            // возвращаем исходное состояние
+            if (!empty($settings)) {
+
+                $this->PHPMailer = $original;
             }
 
             $update = [
@@ -109,20 +133,20 @@ class Email
         if (strlen($template) > 0) {
             try {
                 $html_message = $this->getTemplate($template);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
             }
 
             try {
                 $plaintext = $this->getTemplate($template, true);
                 $plaintext = $this->fetch($plaintext, $data);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
             }
 
             if (isset($html_message)) {
                 try {
                     $main_template = $this->getTemplate('__main');
                     $html_message = str_ireplace('{{MAIN_CONTENT}}', $html_message, $main_template);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                 }
                 $html_message = $this->fetch($html_message, $data);
 
@@ -157,7 +181,7 @@ class Email
             return file_get_contents($filename);
         }
 
-        throw new \Exception("Email template not found");
+        throw new Exception("Email template not found");
         return '';
     }
 
