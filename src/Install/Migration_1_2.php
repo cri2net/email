@@ -24,15 +24,15 @@ class Migration_1_2 implements MigrationInterface
 
                     PDO_DB::query(
                         "CREATE TABLE {$prefix}emails (
-                            id integer NOT NULL,
-                            status emails_status_enum NOT NULL,
+                            id int NOT NULL DEFAULT NEXTVAL ('{$prefix}emails_seq'),
+                            status emails_status_enum NOT NULL DEFAULT 'new',
                             to_email character varying(500) NOT NULL,
                             to_username character varying(500) NOT NULL,
                             created_at double precision NOT NULL,
                             updated_at double precision NOT NULL,
                             send_at double precision,
                             settings text,
-                            \"type\" emails_type_enum NOT NULL,
+                            \"type\" emails_type_enum NOT NULL DEFAULT 'html_template',
                             template character varying(100) NOT NULL,
                             min_sending_time double precision NOT NULL,
                             replace_data text,
