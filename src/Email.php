@@ -313,8 +313,8 @@ class Email
             if ($item[0] == $domain) {
                 return [
                     'domain' => $item[0],
-                    'title' => $lang[$item[0]][$this->lang],
-                    'link' => $item[1]
+                    'title'  => $lang[$item[0]][$this->lang],
+                    'link'   => $item[1],
                 ];
             }
         }
