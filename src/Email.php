@@ -110,12 +110,10 @@ class Email
                 
                 default:
                     throw new Exception("Unknow type");
-                    continue;
             }
 
             // возвращаем исходное состояние
             if (!empty($settings)) {
-
                 $this->PHPMailer = $original;
             }
 
