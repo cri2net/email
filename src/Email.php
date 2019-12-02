@@ -15,7 +15,11 @@ class Email
 
     public function __construct($config = [])
     {
-        $this->PHPMailer = new \PHPMailer();
+        if (class_exists('\PHPMailer')) {
+            $this->PHPMailer = new \PHPMailer();
+        } else {
+            $this->PHPMailer = new \PHPMailer\PHPMailer\PHPMailer();
+        }
 
         $this->CharSet     = 'UTF-8';
         $this->ContentType = "text/html";
@@ -180,7 +184,6 @@ class Email
         }
 
         throw new Exception("Email template not found");
-        return '';
     }
 
     public static function fetch($template_text, $data = [])
