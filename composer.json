@@ -12,7 +12,7 @@
         "php": "^5.4|^7.0",
         "ext-json": "*",
         "cri2net/php-pdo-db": "^1.2",
-        "phpmailer/phpmailer": "~5.2.10|^6.0"
+        "phpmailer/phpmailer": "^5.2.10|^6.0"
     },
     "require-dev": {
     },
@@ -24,5 +24,5 @@
             "cri2net\\email\\": "src"
         }
     },
-    "license": "proprietary"
+    "license": "MIT"
 }
