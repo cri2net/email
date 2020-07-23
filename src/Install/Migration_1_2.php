@@ -2,7 +2,7 @@
 
 namespace cri2net\email\Install;
 
-use \Exception;
+use Exception;
 use cri2net\php_pdo_db\PDO_DB;
 use Placebook\Framework\Core\Install\MigrationInterface;
 
